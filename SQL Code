@@ -1,0 +1,58 @@
+--2018 NYC Central Park Squirrel Census Data Exploration
+--Coded By Sterling James
+
+
+--Lets view our dataset!
+  SELECT *  
+  FROM `squirrels-398520.squirrel_data.squirrels` 
+  ORDER BY Park_ID
+
+--Looks like we can ask some interesting questions here!
+--Let's start with a simple one.
+-What do most squirrels spend their time doing?
+  SELECT Activities, COUNT(*)
+  FROM `squirrels-398520.squirrel_data.squirrels` 
+  WHERE Activities IS NOT NULL
+  GROUP BY Activities
+  ORDER BY 2 DESC
+
+--Looks like most squrriels, 94 counted occurances, spend their time foraging!
+--Lets try something a little trickier!
+--Lets see if squirrels that are willing to approach people are more likely to be eating than those who are less socially inclined.
+
+--First up is finding the friendly squirrels!
+ SELECT Activities, COUNT(*) AS friendly_squirrels
+FROM `squirrels-398520.squirrel_data.squirrels` 
+WHERE 
+  Interactions_with_Humans LIKE '%Approaches%' 
+  OR Interactions_with_Humans LIKE '%Friendly%' 
+  AND Activities LIKE '%Eating%'
+GROUP BY Activities
+ORDER BY 2 DESC
+
+--Now we need the anti-social squirrels
+  SELECT Activities, COUNT (*) AS Antisocial_Squirrels
+  FROM `squirrels-398520.squirrel_data.squirrels` 
+  WHERE 
+    Interactions_with_Humans NOT LIKE '%Approaches%' 
+    AND Interactions_with_Humans NOT LIKE '%Friendly%'
+    AND Activities LIKE '%Eating%'
+  GROUP BY Activities
+  ORDER BY 2 DESC
+
+--Alright, these queries indicate that of the friendly squirrels 13 are recorded as eating and of the anti-social squirrels a whopping 49 are recorded as eating. 
+--This is clearly a win for the introverted folks among us! 
+--Or more likely its due to there being far more anti-social squirrels than friendly squirrels.
+
+--With that answered i'm personally curious to see which parks have the most squirrel sightings!
+--This one is pretty easy!
+  SELECT Park_Name, COUNT (*) AS Squirrel_Sightings
+  FROM `squirrels-398520.squirrel_data.squirrels` 
+  GROUP BY Park_Name
+  ORDER BY 2 DESC
+
+--This tells us that Tompkins Square Park has the most recorded sightings at 59!
+
+--I hope you enjoyed this basic exploration of squirrel data!
+
+
